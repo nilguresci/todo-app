@@ -6,14 +6,13 @@ import "./App.css";
 import { db } from "../Firebase";
 import { onValue, ref } from "firebase/database";
 import { boardService } from "./services/board.service";
+import { taskService } from "./services/task.service";
 const query = ref(db, "Boards");
 
 function App() {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    console.log("sa", query);
-    console.log("as", db);
     // boardService.createBoard({ tasks: [], title: "third board" });
     // boardService.editBoard({
     //   order: 2,
@@ -23,15 +22,16 @@ function App() {
     // });
     // boardService.getBoard("-No6mAovjF6X8f8rP4Ds");
     // boardService.deleteBoard("-No6Xpjx10Zjaf5HD2j6");
-    boardService.orderBoards();
+    // boardService.orderBoards();
     boardService.getBoards();
+    // taskService.createTask({ title: "Test Deneme" }, "-No75-MNl-5yv6ZO1chg");
+    // taskService.getTasks("-No75-MNl-5yv6ZO1chg");
     return onValue(query, (snapshot) => {
       // realtime db nin dinlenmesi, dinliyor
       const data = snapshot.val(); //db nin snapshot yani anlık görüntüsünü alıyor ve valuesunu döndürüyor
-      console.log("n2", data);
 
       if (snapshot.exists()) {
-        console.log(data);
+        console.log("Data Changed", data);
       }
     });
   }, []);
