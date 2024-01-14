@@ -7,6 +7,7 @@ import { db } from "../Firebase";
 import { onValue, ref } from "firebase/database";
 import { boardService } from "./services/board.service";
 import { taskService } from "./services/task.service";
+// import { taskService } from "./services/task.service";
 const query = ref(db, "Boards");
 
 function App() {
@@ -26,6 +27,12 @@ function App() {
     boardService.getBoards();
     // taskService.createTask({ title: "Test Deneme" }, "-No75-MNl-5yv6ZO1chg");
     // taskService.getTasks("-No75-MNl-5yv6ZO1chg");
+    taskService.editTask("-No75-MNl-5yv6ZO1chg", {
+      id: "-No7_pG8Z_YYcK2dND5I",
+      order: 2,
+      title: "edit order 2",
+    });
+    // taskService.orderTasks("-No75-MNl-5yv6ZO1chg");
     return onValue(query, (snapshot) => {
       // realtime db nin dinlenmesi, dinliyor
       const data = snapshot.val(); //db nin snapshot yani anlık görüntüsünü alıyor ve valuesunu döndürüyor
