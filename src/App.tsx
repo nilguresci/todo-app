@@ -4,7 +4,8 @@ import viteLogo from "/vite.svg";
 import "./App.css";
 
 import { db } from "../Firebase";
-import { onValue, push, ref, set } from "firebase/database";
+import { onValue, ref } from "firebase/database";
+import { boardService } from "./services/board.service";
 const query = ref(db, "Boards");
 
 function App() {
@@ -13,12 +14,17 @@ function App() {
   useEffect(() => {
     console.log("sa", query);
     console.log("as", db);
-    const newPostRef = push(query);
-    set(newPostRef, {
-      order: 1,
-      title: "First Board",
-      tasks: [],
-    });
+    // boardService.createBoard({ tasks: [], title: "third board" });
+    // boardService.editBoard({
+    //   order: 2,
+    //   title: "edit Board",
+    //   id: "-No6XnDs0nCsCUGmZzF5",
+    //   tasks: [],
+    // });
+    // boardService.getBoard("-No6mAovjF6X8f8rP4Ds");
+    // boardService.deleteBoard("-No6Xpjx10Zjaf5HD2j6");
+    boardService.orderBoards();
+    boardService.getBoards();
     return onValue(query, (snapshot) => {
       // realtime db nin dinlenmesi, dinliyor
       const data = snapshot.val(); //db nin snapshot yani anlık görüntüsünü alıyor ve valuesunu döndürüyor
