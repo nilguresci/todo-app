@@ -5,4 +5,10 @@
   align-content: center;
   justify-content: space-around;
   align-items: flex-start;
+  gap: 20px;
+}
+
+.board-container {
+  max-height: 50vh;
+  overflow: auto;
 }
