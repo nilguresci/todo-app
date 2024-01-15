@@ -6,3 +6,10 @@ export type Board = {
   title: string;
   tasks: Task[];
 };
+
+export type Test = {
+  [key: string]: {
+    id: string;
+    content: string;
+  }[];
+};

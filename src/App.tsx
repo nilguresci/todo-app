@@ -12,6 +12,7 @@ import {
 } from "react-beautiful-dnd";
 import "./App.css";
 import { useState } from "react";
+import { Test } from "./models/Board";
 
 // fake data generator
 const getItems = (count: number, itemName: string) =>
@@ -42,7 +43,7 @@ const getListStyle = (isDraggingOver: any) => ({
 });
 
 const App = () => {
-  const [data, setData] = useState({
+  const [data, setData] = useState<Test>({
     ahmet: getItems(10, "Ahmet"),
     nil: getItems(10, "Nil"),
     findik: getItems(10, "Fındık"),
