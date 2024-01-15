@@ -3,7 +3,7 @@ import { useDraggable } from "@dnd-kit/core";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Task = (props: any) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: "draggable",
+    id: props.id,
   });
   const style = transform
     ? {
