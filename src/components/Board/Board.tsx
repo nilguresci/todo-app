@@ -7,6 +7,8 @@ import { FaEllipsisV, FaPlus } from "react-icons/fa";
 import Task from "../Task/Task";
 import style from "./board.module.scss";
 import { Board as BoardType } from "../../models/Board";
+import { useState } from "react";
+import TaskBoard from "../TaskModal/TaskBoard";
 
 type Props = {
   provided: DroppableProvided;
@@ -15,6 +17,8 @@ type Props = {
 };
 
 const Board = (props: Props) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
   const getListStyle = (isDraggingOver: boolean) => ({
     background: isDraggingOver ? "#ffebe5" : "#ecf0f5",
     padding: 8,
@@ -31,7 +35,7 @@ const Board = (props: Props) => {
       <div className={style.boardHeader}>
         <h4>{props.data.title}</h4>
         <div className={style.boardHeaderRight}>
-          <div>1</div>
+          <div>{props.data.tasks?.length || 0}</div>
           <div className={style.boardMenu}>
             <FaEllipsisV />
           </div>
@@ -48,10 +52,18 @@ const Board = (props: Props) => {
         {props.provided.placeholder}
       </div>
       <div className={style.addCardContainer}>
-        <button className={style.addCardBtn}>
+        <button
+          className={style.addCardBtn}
+          onClick={() => setModalVisible(true)}
+        >
           <FaPlus size={12} /> &nbsp; Add card
         </button>
       </div>
+      <TaskBoard
+        boardId={props.data.id}
+        modalIsOpen={modalVisible}
+        closeModal={() => setModalVisible(false)}
+      />
     </div>
   );
 };

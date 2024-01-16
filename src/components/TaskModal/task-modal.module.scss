@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.button {
+  border-radius: 5px;
+  padding: 5px;
+  background: none;
+  border: 1px solid #3a488e;
+}
+
+.button:hover {
+  cursor: pointer;
+}
+
+.closeButton {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  padding: 5px;
+  margin: 0px;
+  height: 25px;
+  background-color: unset;
+  border: none;
+  transition: all 500ms;
+}
+
+.closeButton:hover {
+  cursor: pointer;
+  scale: 1.3;
+}

@@ -14,10 +14,12 @@ import Board from "./components/Board/Board";
 import { onValue, ref } from "firebase/database";
 import { db } from "../Firebase";
 import { boardService } from "./services/board.service";
+import BoardModal from "./components/BoardModal/BoardModal";
 
 const query = ref(db, "Boards");
 const App = () => {
   const [data, setData] = useState<Deneme>({});
+  const [boardModalVisible, setBoardModalVisible] = useState(false);
 
   // a little function to help us with reordering the result
   const reorder = (
@@ -88,11 +90,7 @@ const App = () => {
   }, []);
 
   const addBoard = () => {
-    boardService.createBoard({
-      id: "",
-      tasks: [],
-      title: "New",
-    });
+    setBoardModalVisible(true);
   };
 
   return (
@@ -129,6 +127,10 @@ const App = () => {
             ))}
           </div>
         </DragDropContext>
+        <BoardModal
+          modalIsOpen={boardModalVisible}
+          closeModal={() => setBoardModalVisible(false)}
+        />
       </div>
     </>
   );
