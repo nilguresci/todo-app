@@ -1,12 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Draggable } from "react-beautiful-dnd";
+import {
+  Draggable,
+  DroppableProvided,
+  DroppableStateSnapshot,
+} from "react-beautiful-dnd";
 import { FaEllipsisV, FaPlus } from "react-icons/fa";
 import Task from "../Task/Task";
 import style from "./board.module.scss";
+import { Board as BoardType } from "../../models/Board";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Board = (props: any) => {
-  const getListStyle = (isDraggingOver: any) => ({
+type Props = {
+  provided: DroppableProvided;
+  snapshot: DroppableStateSnapshot;
+  data: BoardType;
+};
+
+const Board = (props: Props) => {
+  const getListStyle = (isDraggingOver: boolean) => ({
     background: isDraggingOver ? "#ffebe5" : "#ecf0f5",
     padding: 8,
     width: 250,
@@ -20,7 +29,7 @@ const Board = (props: any) => {
       className={style.boardContainer}
     >
       <div className={style.boardHeader}>
-        <h4>Testing</h4>
+        <h4>{props.data.title}</h4>
         <div className={style.boardHeaderRight}>
           <div>1</div>
           <div className={style.boardMenu}>
@@ -29,20 +38,13 @@ const Board = (props: any) => {
         </div>
       </div>
       <div className={style.boardListContainer}>
-        {props.data.map(
-          (item: { id: string; content: string }, index: number) => (
-            <Draggable key={item.id} draggableId={item.id} index={index}>
-              {(provided, snapshot) => (
-                <Task
-                  provided={provided}
-                  id={item.id}
-                  snapshot={snapshot}
-                  content={item.content}
-                />
-              )}
-            </Draggable>
-          )
-        )}
+        {props.data.tasks?.map((task, index) => (
+          <Draggable key={task.id} draggableId={task.id} index={index}>
+            {(provided, snapshot) => (
+              <Task provided={provided} task={task} snapshot={snapshot} />
+            )}
+          </Draggable>
+        ))}
         {props.provided.placeholder}
       </div>
       <div className={style.addCardContainer}>

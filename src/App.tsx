@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   DragDropContext,
   DraggableLocation,
@@ -8,28 +7,17 @@ import {
   DroppableStateSnapshot,
 } from "react-beautiful-dnd";
 import "./App.css";
-import { useState } from "react";
-import { Test } from "./models/Board";
+import { useEffect, useState } from "react";
+import { Deneme } from "./models/Board";
 import { FaPlus } from "react-icons/fa";
 import Board from "./components/Board/Board";
+import { onValue, ref } from "firebase/database";
+import { db } from "../Firebase";
+import { boardService } from "./services/board.service";
 
-// fake data generator
-const getItems = (count: number, itemName: string) =>
-  Array.from({ length: count }, (_v, k) => k).map((k) => ({
-    id: `${itemName}-${k}`,
-    content: `${itemName} ${k}`,
-  }));
-
+const query = ref(db, "Boards");
 const App = () => {
-  const [data, setData] = useState<Test>({
-    ahmet: getItems(10, "Ahmet"),
-    nil: getItems(10, "Nil"),
-    findik: getItems(10, "Fındık"),
-    miuv: getItems(10, "Mi'uv"),
-    pasa: getItems(10, "Paşa"),
-
-    pagfhgfsa: getItems(10, "Pafghfghşa"),
-  });
+  const [data, setData] = useState<Deneme>({});
 
   // a little function to help us with reordering the result
   const reorder = (
@@ -37,14 +25,13 @@ const App = () => {
     endIndex: number,
     key: keyof typeof data
   ) => {
-    const result = Array.from(data[key]);
+    const result = Array.from(data[key].tasks);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
-
-    setData((d) => ({
-      ...d,
-      [key]: result,
-    }));
+    const da = data;
+    da[key].tasks = result;
+    setData(da);
+    boardService.editBoard(da[key]);
   };
 
   const move = (
@@ -53,21 +40,21 @@ const App = () => {
     droppableSource: DraggableLocation,
     droppableDestination: DraggableLocation
   ) => {
-    const sourceClone = Array.from(data[sourceKey]);
-    const destClone = Array.from(data[destinationKey]);
+    const sourceClone = Array.from(data[sourceKey].tasks);
+    const destClone = Array.from(data[destinationKey].tasks || []);
     const [removed] = sourceClone.splice(droppableSource.index, 1);
 
     destClone.splice(droppableDestination.index, 0, removed);
 
-    setData((d) => ({
-      ...d,
-      [sourceKey]: sourceClone,
-      [destinationKey]: destClone,
-    }));
+    const da = data;
+    da[sourceKey].tasks = sourceClone;
+    da[destinationKey].tasks = destClone;
+    setData(da);
+    boardService.editBoard(da[sourceKey]);
+    boardService.editBoard(da[destinationKey]);
   };
 
   const onDragEnd = (result: DropResult) => {
-    console.log("DragEnd result", result);
     // dropped outside the list
     if (!result.destination) {
       return;
@@ -89,6 +76,25 @@ const App = () => {
     }
   };
 
+  useEffect(() => {
+    return onValue(query, (snapshot) => {
+      // realtime db nin dinlenmesi, dinliyor
+      const val = snapshot.val(); //db nin snapshot yani anlık görüntüsünü alıyor ve valuesunu döndürüyor
+      if (snapshot.exists()) {
+        console.log("Data Changed", val);
+        setData(val);
+      }
+    });
+  }, []);
+
+  const addBoard = () => {
+    boardService.createBoard({
+      id: "",
+      tasks: [],
+      title: "New",
+    });
+  };
+
   return (
     <>
       <div className="pageHeader">
@@ -96,7 +102,11 @@ const App = () => {
       </div>
       <hr />
       <div className="addColumnContainer">
-        <button type="button" className="addColumnBtn">
+        <button
+          type="button"
+          className="addColumnBtn"
+          onClick={() => addBoard()}
+        >
           <FaPlus /> &nbsp; ADD COLUMN
         </button>
       </div>

@@ -1,8 +1,7 @@
 import { Task } from "./Task";
 
 export type Board = {
-  id?: string;
-  order?: number;
+  id: string;
   title: string;
   tasks: Task[];
 };
@@ -12,4 +11,8 @@ export type Test = {
     id: string;
     content: string;
   }[];
+};
+
+export type Deneme = {
+  [key: string]: Board;
 };

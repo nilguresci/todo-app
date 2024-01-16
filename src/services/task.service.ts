@@ -1,17 +1,13 @@
-import { get, push, query, ref, set, update } from "firebase/database";
+import { get, query, ref, update } from "firebase/database";
 import { Task } from "../models/Task";
 import { db } from "../../Firebase";
 import { boardService } from "./board.service";
 
 const createTask = async (task: Task, boardId: string) => {
-  const tasksRef = ref(db, `Boards/${boardId}/tasks`);
+  task.id = new Date().getTime().toString();
   const board = await boardService.getBoard(boardId);
-  //   const tasks = await getTasks(boardId);
-  task.order = board.tasks ? board.tasks.length : 0;
-  const newTaskRef = push(tasksRef);
-  task.id = newTaskRef.key!;
-  set(newTaskRef, task);
-  //   boardService.editBoard(board);
+  board.tasks ? board.tasks.push(task) : (board.tasks = [task]);
+  boardService.editBoard(board);
 };
 
 const getTasks = async (boardId: string) => {
@@ -25,23 +21,16 @@ const getTasks = async (boardId: string) => {
   return tasks;
 };
 
-const editTask = async (boardId: string, task: Task) => {
-  // const board = await boardService.getBoard(boardId);
-  const taskRef = ref(db, `Boards/${boardId}/tasks/${task.id}`);
-  update(taskRef, task);
+const editTask = async (boardId: string, task: Task, index: number) => {
+  const board = await boardService.getBoard(boardId);
+
+  board.tasks[index] = task;
+
+  update(ref(db, `Boards/${boardId}`), board);
 };
 
-const orderTasks = async (boardId: string) => {
-  const tasks = await getTasks(boardId);
-  tasks.forEach((task, index) => {
-    if (task.order !== index) {
-      editTask(boardId, { ...task, order: index });
-    }
-  });
-};
 export const taskService = {
   getTasks,
   createTask,
   editTask,
-  orderTasks,
 };
