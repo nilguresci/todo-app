@@ -1,71 +1,55 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useDroppable } from "@dnd-kit/core";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { Draggable } from "react-beautiful-dnd";
+import { FaEllipsisV, FaPlus } from "react-icons/fa";
 import Task from "../Task/Task";
-import { useState } from "react";
+import style from "./board.module.scss";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Board = (props: any) => {
-  const { isOver, setNodeRef } = useDroppable({
-    id: props.id,
+  const getListStyle = (isDraggingOver: any) => ({
+    background: isDraggingOver ? "#ffebe5" : "#ecf0f5",
+    padding: 8,
+    width: 250,
   });
-  const style: React.CSSProperties = {
-    color: isOver ? "green" : undefined,
-    backgroundColor: isOver ? "yellow" : undefined,
-    border: "1px solid",
-    padding: "50px",
-  };
-
-  const [items, setItems] = useState([1, 2, 3]);
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  function handleDragEnd(event: any) {
-    const { active, over } = event;
-
-    if (active.id !== over.id) {
-      setItems((items: any) => {
-        const oldIndex = items.indexOf(active.id);
-        const newIndex = items.indexOf(over.id);
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  }
 
   return (
-    <div ref={setNodeRef} style={style}>
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext items={items} strategy={verticalListSortingStrategy}>
-          {items.map((id: any) => (
-            <Task key={id} id={id}>
-              {" "}
-              Selamlar Ben {id}{" "}
-            </Task>
-          ))}
-        </SortableContext>
-      </DndContext>
+    <div
+      {...props.provided.droppableProps}
+      ref={props.provided.innerRef}
+      style={getListStyle(props.snapshot.isDraggingOver)}
+      className={style.boardContainer}
+    >
+      <div className={style.boardHeader}>
+        <h4>Testing</h4>
+        <div className={style.boardHeaderRight}>
+          <div>1</div>
+          <div className={style.boardMenu}>
+            <FaEllipsisV />
+          </div>
+        </div>
+      </div>
+      <div className={style.boardListContainer}>
+        {props.data.map(
+          (item: { id: string; content: string }, index: number) => (
+            <Draggable key={item.id} draggableId={item.id} index={index}>
+              {(provided, snapshot) => (
+                <Task
+                  provided={provided}
+                  id={item.id}
+                  snapshot={snapshot}
+                  content={item.content}
+                />
+              )}
+            </Draggable>
+          )
+        )}
+        {props.provided.placeholder}
+      </div>
+      <div className={style.addCardContainer}>
+        <button className={style.addCardBtn}>
+          <FaPlus size={12} /> &nbsp; Add card
+        </button>
+      </div>
     </div>
   );
 };

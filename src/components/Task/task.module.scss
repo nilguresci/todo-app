@@ -1,0 +1,19 @@
+.taskContainer {
+  width: 200px;
+  border-radius: 3px;
+  background-color: aliceblue;
+  font-weight: bold;
+  .taskContent {
+    color: #3a488e;
+    font-size: 16px;
+  }
+  .taskId {
+    color: #afb0b0;
+    font-size: 13px;
+    margin-top: 3px;
+  }
+  .arrow {
+    margin-top: 7px;
+    font-size: 13px;
+  }
+}

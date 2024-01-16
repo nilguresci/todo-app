@@ -1,18 +1,45 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { FaArrowUp } from "react-icons/fa";
+import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
+import style from "./task.module.scss";
+type Props = {
+  provided: DraggableProvided;
+  snapshot: DraggableStateSnapshot;
+  id: string;
+  content: string;
+};
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Task = (props: any) => {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: props.id });
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+const Task = (props: Props) => {
+  const grid = 6;
+  const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
+    // some basic styles to make the items look a bit nicer
+    userSelect: "none",
+    padding: grid * 2,
+    margin: `0 0 ${grid}px 0`,
 
+    // change background colour if dragging
+    background: isDragging ? "#f4f5f5" : "#ffffff",
+
+    // styles we need to apply on draggables
+    ...draggableStyle,
+  });
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {props.children}
+    <div
+      ref={props.provided.innerRef}
+      id={props.id}
+      {...props.provided.draggableProps}
+      {...props.provided.dragHandleProps}
+      style={getItemStyle(
+        props.snapshot.isDragging,
+        props.provided.draggableProps.style
+      )}
+      className={style.taskContainer}
+    >
+      <div className={style.taskContent}>{props.content}</div>
+      <div className={style.taskId}>id 34343</div>
+      <div className={style.arrow}>
+        <FaArrowUp color="#d5d6d6" />
+      </div>
     </div>
   );
 };

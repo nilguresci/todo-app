@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   DragDropContext,
-  Draggable,
   DraggableLocation,
-  DraggableProvided,
-  DraggableStateSnapshot,
   DropResult,
   Droppable,
   DroppableProvided,
@@ -13,6 +10,8 @@ import {
 import "./App.css";
 import { useState } from "react";
 import { Test } from "./models/Board";
+import { FaPlus } from "react-icons/fa";
+import Board from "./components/Board/Board";
 
 // fake data generator
 const getItems = (count: number, itemName: string) =>
@@ -21,27 +20,6 @@ const getItems = (count: number, itemName: string) =>
     content: `${itemName} ${k}`,
   }));
 
-const grid = 8;
-
-const getItemStyle = (isDragging: any, draggableStyle: any) => ({
-  // some basic styles to make the items look a bit nicer
-  userSelect: "none",
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
-
-  // change background colour if dragging
-  background: isDragging ? "lightgreen" : "grey",
-
-  // styles we need to apply on draggables
-  ...draggableStyle,
-});
-
-const getListStyle = (isDraggingOver: any) => ({
-  background: isDraggingOver ? "lightblue" : "lightgrey",
-  padding: grid,
-  width: 250,
-});
-
 const App = () => {
   const [data, setData] = useState<Test>({
     ahmet: getItems(10, "Ahmet"),
@@ -49,6 +27,8 @@ const App = () => {
     findik: getItems(10, "Fındık"),
     miuv: getItems(10, "Mi'uv"),
     pasa: getItems(10, "Paşa"),
+
+    pagfhgfsa: getItems(10, "Pafghfghşa"),
   });
 
   // a little function to help us with reordering the result
@@ -110,47 +90,37 @@ const App = () => {
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <div className="container">
-        {Object.keys(data).map((key: string) => (
-          <Droppable droppableId={key}>
-            {(
-              provided: DroppableProvided,
-              snapshot: DroppableStateSnapshot
-            ) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                style={getListStyle(snapshot.isDraggingOver)}
-              >
-                {data[key as keyof typeof data].map((item, index) => (
-                  <Draggable key={item.id} draggableId={item.id} index={index}>
-                    {(
-                      provided: DraggableProvided,
-                      snapshot: DraggableStateSnapshot
-                    ) => (
-                      <div
-                        ref={provided.innerRef}
-                        id={item.id}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={getItemStyle(
-                          snapshot.isDragging,
-                          provided.draggableProps.style
-                        )}
-                      >
-                        {item.content}
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        ))}
+    <>
+      <div className="pageHeader">
+        <h2>Taskboard</h2>
       </div>
-    </DragDropContext>
+      <hr />
+      <div className="addColumnContainer">
+        <button type="button" className="addColumnBtn">
+          <FaPlus /> &nbsp; ADD COLUMN
+        </button>
+      </div>
+      <div>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="container">
+            {Object.keys(data).map((key: string) => (
+              <Droppable droppableId={key}>
+                {(
+                  provided: DroppableProvided,
+                  snapshot: DroppableStateSnapshot
+                ) => (
+                  <Board
+                    provided={provided}
+                    snapshot={snapshot}
+                    data={data[key as keyof typeof data]}
+                  />
+                )}
+              </Droppable>
+            ))}
+          </div>
+        </DragDropContext>
+      </div>
+    </>
   );
 };
 
